@@ -1,0 +1,21 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Asm" rel="Chapter" href="Asm.html">
+<link title="Drisc" rel="Chapter" href="Drisc.html"><title>Asm.bernstein</title>
+</head>
+<body>
+<code class="code"><span class="keyword">let</span>&nbsp;bernstein&nbsp;i1&nbsp;i2&nbsp;=&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;d1&nbsp;=&nbsp;domain&nbsp;i1&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;d2&nbsp;=&nbsp;domain&nbsp;i2&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;c1&nbsp;=&nbsp;codomain&nbsp;i1&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;c2&nbsp;=&nbsp;codomain&nbsp;i2&nbsp;<span class="keyword">in</span><br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;d1c2&nbsp;=&nbsp;intersect&nbsp;d1&nbsp;c2&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;d2c1&nbsp;=&nbsp;intersect&nbsp;d2&nbsp;c1&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">if</span>(d1c2&nbsp;=&nbsp;[]&nbsp;<span class="keywordsign">&amp;&amp;</span>&nbsp;d2c1&nbsp;=&nbsp;[])&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">then</span>&nbsp;<span class="keyword">true</span><br>
+&nbsp;&nbsp;<span class="keyword">else</span>&nbsp;<span class="keyword">false</span></code></body></html>

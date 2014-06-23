@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Asm.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Asm" rel="Chapter" href="Asm.html">
+<link title="Drisc" rel="Chapter" href="Drisc.html"><title>Drisc</title>
+</head>
+<body>
+<div class="navbar"><a href="Asm.html">Previous</a>
+&nbsp;<a href="index.html">Up</a>
+&nbsp;</div>
+<center><h1>Module <a href="type_Drisc.html">Drisc</a></h1></center>
+<br>
+<pre><span class="keyword">module</span> Drisc: <code class="code">sig</code> <a href="Drisc.html">..</a> <code class="code">end</code></pre>DRISC Asm interpreter
+		This file contain function for executing DRISC code.
+<p>
+
+    Year 2011
+<p>
+
+    Updated on 27-06-11 by Nicola Corti<br>
+<hr width="100%">
+<pre><span class="keyword">val</span> <a name="VALregs"></a><a href="code_VALDrisc.regs.html">regs</a> : <code class="type">int</code></pre><div class="info">
+DRISC default register number<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALmemsize"></a><a href="code_VALDrisc.memsize.html">memsize</a> : <code class="type">int</code></pre><div class="info">
+DRISC default memory size<br>
+</div>
+<br><code><span class="keyword">type</span> <a name="TYPEassoc"></a><code class="type"></code>assoc = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Ass</span> <span class="keyword">of</span> <code class="type">string * int</code></code></td>
+
+</tr></table>
+
+<div class="info">
+shortcut to maps ...<br>
+</div>
+
+<pre><span class="keyword">val</span> <a name="VALhasKey"></a><a href="code_VALDrisc.hasKey.html">hasKey</a> : <code class="type">string -> <a href="Drisc.html#TYPEassoc">assoc</a> list -> bool</code></pre><div class="info">
+checks whether a key is in a map<br>
+<b>Returns</b> true if k is found, false if not<br>
+</div>
+<div class="param_info"><code class="code">k</code> : A key to be found into a map</div>
+<pre><span class="keyword">val</span> <a name="VALvalueOfKey"></a><a href="code_VALDrisc.valueOfKey.html">valueOfKey</a> : <code class="type">string -> <a href="Drisc.html#TYPEassoc">assoc</a> list -> int</code></pre><div class="info">
+looks up a key in a map<br>
+<b>Returns</b> If the key is found, return his value, else it fail with "key not found"<br>
+</div>
+<div class="param_info"><code class="code">k</code> : The key to be found</div>
+<div class="param_info"><code class="code">labs</code> : The map containing the key</div>
+<br><code><span class="keyword">type</span> <a name="TYPEpenv"></a><code class="type"></code>penv = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Penv</span> <span class="keyword">of</span> <code class="type">int Pervasives.ref * int array * int array * <a href="Drisc.html#TYPEassoc">assoc</a> list</code></code></td>
+
+</tr></table>
+
+<div class="info">
+execution environment (the state of the processor + 
+    the labels compiled. 
+    an environment is:
+    pc, reg, mem, labels<br>
+</div>
+
+<pre><span class="keyword">val</span> <a name="VALdump"></a><a href="code_VALDrisc.dump.html">dump</a> : <code class="type"><a href="Drisc.html#TYPEpenv">penv</a> -> unit</code></pre><div class="info">
+pretty print the environment<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALcalculate"></a><a href="code_VALDrisc.calculate.html">calculate</a> : <code class="type"><a href="Asm.html#TYPEasm">Asm.asm</a> -> <a href="Drisc.html#TYPEpenv">penv</a> -> unit</code></pre><div class="info">
+Calculate the result of a non-jump instruction without increasing IC<br>
+</div>
+<div class="param_info"><code class="code">asm</code> : the ASM instruction</div>
+<div class="param_info"><code class="code">env</code> : the enviroment where execute asm</div>
+<pre><span class="keyword">val</span> <a name="VALbranch_handler"></a><a href="code_VALDrisc.branch_handler.html">branch_handler</a> : <code class="type"><a href="Asm.html#TYPEasm">Asm.asm</a> -> <a href="Drisc.html#TYPEpenv">penv</a> -> <a href="Asm.html#TYPElabel">Asm.label</a> -> unit</code></pre><div class="info">
+Function for handling the Delayed Branch execution,
+		it execute the next instruction and change the value of IC.
+		<b>If in the Delay Slot there is a Jump, the execution fail</b><br>
+</div>
+<div class="param_info"><code class="code">istr</code> : The ASM instruction in delay slot</div>
+<div class="param_info"><code class="code">env</code> : The enviroment</div>
+<div class="param_info"><code class="code">label</code> : The Label to jump to</div>
+<pre><span class="keyword">val</span> <a name="VALstep"></a><a href="code_VALDrisc.step.html">step</a> : <code class="type"><a href="Asm.html#TYPEinstruction">Asm.instruction</a> list -> <a href="Drisc.html#TYPEpenv">penv</a> -> unit</code></pre><div class="info">
+execute one instruction within an environment<br>
+</div>
+<div class="param_info"><code class="code">pgm</code> : the instruction to be executed</div>
+<div class="param_info"><code class="code">env</code> : the initial environment. it is modified via side effects</div>
+<pre><span class="keyword">val</span> <a name="VALlabels"></a><a href="code_VALDrisc.labels.html">labels</a> : <code class="type"><a href="Asm.html#TYPEinstruction">Asm.instruction</a> list -> int -> <a href="Drisc.html#TYPEassoc">assoc</a> list</code></pre><div class="info">
+compile labels. Takes a program with labels and returns 
+    a map with the label addresses<br>
+</div>
+<div class="param_info"><code class="code">pgm</code> : the program</div>
+<div class="param_info"><code class="code">addr</code> : the initial address of the program</div>
+<pre><span class="keyword">val</span> <a name="VALcreate_regs"></a><a href="code_VALDrisc.create_regs.html">create_regs</a> : <code class="type">int -> int array</code></pre><div class="info">
+Create a new set of register<br>
+<b>Returns</b> A new register set of size n<br>
+</div>
+<div class="param_info"><code class="code">n</code> : The size of register set</div>
+<pre><span class="keyword">val</span> <a name="VALstepper"></a><a href="code_VALDrisc.stepper.html">stepper</a> : <code class="type">int -> int -> int -> <a href="Asm.html#TYPEinstruction">Asm.instruction</a> list -> int -> unit</code></pre><div class="info">
+Execute some step of an Instruction List<br>
+</div>
+<div class="param_info"><code class="code">r</code> : The reg set size</div>
+<div class="param_info"><code class="code">m</code> : The memory size</div>
+<div class="param_info"><code class="code">ipc</code> : The initial value of IC</div>
+<div class="param_info"><code class="code">prg</code> : The instruciont list (the program)</div>
+<div class="param_info"><code class="code">steps</code> : Number of steps to be executed</div>
+<pre><span class="keyword">val</span> <a name="VALexecute"></a><a href="code_VALDrisc.execute.html">execute</a> : <code class="type">int -> int -> int -> <a href="Asm.html#TYPEinstruction">Asm.instruction</a> list -> unit</code></pre><div class="info">
+Execute an Instruction List till the END instruction<br>
+</div>
+<div class="param_info"><code class="code">r</code> : The reg set size</div>
+<div class="param_info"><code class="code">m</code> : The memory size</div>
+<div class="param_info"><code class="code">ipc</code> : The initial value of IC</div>
+<div class="param_info"><code class="code">prg</code> : The instruciont list (the program)</div>
+<pre><span class="keyword">val</span> <a name="VALdrisc_stepper"></a><a href="code_VALDrisc.drisc_stepper.html">drisc_stepper</a> : <code class="type"><a href="Asm.html#TYPEinstruction">Asm.instruction</a> list -> int -> unit</code></pre><div class="info">
+Execute some step of an Instruction List
+		with DRISC default value for reg set and memory<br>
+</div>
+<div class="param_info"><code class="code">prg</code> : The instruciont list (the program)</div>
+<pre><span class="keyword">val</span> <a name="VALdrisc_execute"></a><a href="code_VALDrisc.drisc_execute.html">drisc_execute</a> : <code class="type"><a href="Asm.html#TYPEinstruction">Asm.instruction</a> list -> unit</code></pre><div class="info">
+Execute an Instruction List till the END instruction
+		with DRISC default value for reg set and memory<br>
+</div>
+<div class="param_info"><code class="code">prg</code> : The instruciont list (the program)</div>
+<pre><span class="keyword">val</span> <a name="VALmaxthree"></a><a href="code_VALDrisc.maxthree.html">maxthree</a> : <code class="type">'a -> 'a -> 'a -> 'a</code></pre><div class="info">
+Calculate the max value between three value<br>
+<b>Returns</b> The max of previous value<br>
+</div>
+<div class="param_info"><code class="code">a</code> : The first value</div>
+<div class="param_info"><code class="code">b</code> : The second value</div>
+<div class="param_info"><code class="code">c</code> : The third value</div>
+<pre><span class="keyword">val</span> <a name="VALmaxregistr"></a><a href="code_VALDrisc.maxregistr.html">maxregistr</a> : <code class="type"><a href="Asm.html#TYPEinstruction">Asm.instruction</a> -> int</code></pre><div class="info">
+Calculate the max register of a ASM instruction<br>
+<b>Returns</b> The max register of an instruction<br>
+</div>
+<div class="param_info"><code class="code">istr</code> : The ASM istruction</div>
+<pre><span class="keyword">val</span> <a name="VALmaxreg"></a><a href="code_VALDrisc.maxreg.html">maxreg</a> : <code class="type"><a href="Asm.html#TYPEinstruction">Asm.instruction</a> list -> int -> int</code></pre><div class="info">
+Calculate the max register of an instruction list<br>
+<b>Returns</b> The max register of an instruction list<br>
+</div>
+<div class="param_info"><code class="code">prg</code> : The instruction list</div>
+<div class="param_info"><code class="code">a</code> : The initial value (it must be set to 0, to let recursion work well)</div>
+<pre><span class="keyword">val</span> <a name="VALautostepper"></a><a href="code_VALDrisc.autostepper.html">autostepper</a> : <code class="type">int -> int -> <a href="Asm.html#TYPEinstruction">Asm.instruction</a> list -> int -> unit</code></pre><div class="info">
+Execute some step of an Instruction List
+		with a Register set big enough for executing the instruction list<br>
+</div>
+<div class="param_info"><code class="code">m</code> : The memory size</div>
+<div class="param_info"><code class="code">ipc</code> : The initial value of IC</div>
+<div class="param_info"><code class="code">prg</code> : The instruciont list (the program)</div>
+<div class="param_info"><code class="code">steps</code> : Number of steps to be executed</div>
+<pre><span class="keyword">val</span> <a name="VALautoexecute"></a><a href="code_VALDrisc.autoexecute.html">autoexecute</a> : <code class="type">int -> int -> <a href="Asm.html#TYPEinstruction">Asm.instruction</a> list -> unit</code></pre><div class="info">
+Execute an Instruction List till the END instruction
+		with a Register set big enough for executing the instruction list<br>
+</div>
+<div class="param_info"><code class="code">m</code> : The memory size</div>
+<div class="param_info"><code class="code">ipc</code> : The initial value of IC</div>
+<div class="param_info"><code class="code">prg</code> : The instruciont list (the program)</div>
+</body></html>

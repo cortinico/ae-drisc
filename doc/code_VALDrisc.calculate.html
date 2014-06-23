@@ -1,0 +1,37 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Asm" rel="Chapter" href="Asm.html">
+<link title="Drisc" rel="Chapter" href="Drisc.html"><title>Drisc.calculate</title>
+</head>
+<body>
+<code class="code"><span class="keyword">let</span>&nbsp;calculate&nbsp;asm&nbsp;env&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">match</span>&nbsp;env&nbsp;<span class="keyword">with</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Penv</span>(pc,&nbsp;r,&nbsp;m,&nbsp;labs)&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="keyword">match</span>&nbsp;asm&nbsp;<span class="keyword">with</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">ADD</span>(<span class="constructor">Reg</span>(a),<span class="constructor">Reg</span>(b),<span class="constructor">Reg</span>(c))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;r.(c)&nbsp;&lt;-&nbsp;r.(a)&nbsp;+&nbsp;r.(b);<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">SUB</span>(<span class="constructor">Reg</span>(a),<span class="constructor">Reg</span>(b),<span class="constructor">Reg</span>(c))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;r.(c)&nbsp;&lt;-&nbsp;r.(a)&nbsp;-&nbsp;r.(b);<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">MUL</span>(<span class="constructor">Reg</span>(a),<span class="constructor">Reg</span>(b),<span class="constructor">Reg</span>(c))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;r.(c)&nbsp;&lt;-&nbsp;r.(a)&nbsp;*&nbsp;r.(b);<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">DIV</span>(<span class="constructor">Reg</span>(a),<span class="constructor">Reg</span>(b),<span class="constructor">Reg</span>(c))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;r.(c)&nbsp;&lt;-&nbsp;r.(a)&nbsp;/&nbsp;r.(b);<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">ADDI</span>(<span class="constructor">Reg</span>(a),<span class="constructor">Const</span>(b),<span class="constructor">Reg</span>(c))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;r.(c)&nbsp;&lt;-&nbsp;r.(a)&nbsp;+&nbsp;b;<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">SUBI</span>(<span class="constructor">Reg</span>(a),<span class="constructor">Const</span>(b),<span class="constructor">Reg</span>(c))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;r.(c)&nbsp;&lt;-&nbsp;r.(a)&nbsp;-&nbsp;b;<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">INC</span>(<span class="constructor">Reg</span>(a))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;r.(a)&nbsp;&lt;-&nbsp;r.(a)+1;<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">DEC</span>(<span class="constructor">Reg</span>(a))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;r.(a)&nbsp;&lt;-&nbsp;r.(a)-1;<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">LD</span>(<span class="constructor">Reg</span>(a),<span class="constructor">Reg</span>(b),<span class="constructor">Reg</span>(c))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;ind&nbsp;=&nbsp;r.(a)&nbsp;+&nbsp;r.(b)&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r.(c)&nbsp;&lt;-&nbsp;m.(ind);<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">LDI</span>(<span class="constructor">Reg</span>(a),<span class="constructor">Const</span>(b),<span class="constructor">Reg</span>(c))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;ind&nbsp;=&nbsp;r.(a)&nbsp;+&nbsp;b&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r.(c)&nbsp;&lt;-&nbsp;m.(ind);<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">ST</span>(<span class="constructor">Reg</span>(a),<span class="constructor">Reg</span>(b),<span class="constructor">Reg</span>(c))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;ind&nbsp;=&nbsp;r.(a)&nbsp;+&nbsp;r.(b)&nbsp;<span class="keyword">in</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;m.(ind)&nbsp;&lt;-&nbsp;r.(c);<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;<span class="constructor">STI</span>(<span class="constructor">Reg</span>(a),<span class="constructor">Const</span>(b),<span class="constructor">Reg</span>(c))&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;ind&nbsp;=&nbsp;r.(a)&nbsp;+&nbsp;b&nbsp;<span class="keyword">in</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;m.(ind)&nbsp;&lt;-&nbsp;r.(c);<br>
+<span class="keywordsign">|</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;printf&nbsp;<span class="string">"UNIMPLEMENTED:"</span>;&nbsp;pp_asm&nbsp;asm<br>
+&nbsp;&nbsp;&nbsp;&nbsp;)</code></body></html>

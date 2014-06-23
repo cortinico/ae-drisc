@@ -1,0 +1,421 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="next" href="Drisc.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Asm" rel="Chapter" href="Asm.html">
+<link title="Drisc" rel="Chapter" href="Drisc.html"><title>Asm</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a href="index.html">Up</a>
+&nbsp;<a href="Drisc.html">Next</a>
+</div>
+<center><h1>Module <a href="type_Asm.html">Asm</a></h1></center>
+<br>
+<pre><span class="keyword">module</span> Asm: <code class="code">sig</code> <a href="Asm.html">..</a> <code class="code">end</code></pre>some support to the analysis of D-RISC code on pipeline processors
+    This includes the possibility to find dependencies in linear 
+    D-RISC code and to execute D-RISC instructions with a given 
+    configuration of registers and memory (with no cache).<br>
+<b>Author(s):</b> Marco Danelutto 
+    Year 2011
+    
+    Updated on 27-06-11 by Nicola Corti<br>
+<hr width="100%">
+<br><code><span class="keyword">type</span> <a name="TYPEreg"></a><code class="type"></code>reg = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Reg</span> <span class="keyword">of</span> <code class="type">int</code></code></td>
+
+</tr></table>
+
+<div class="info">
+the type modelling registers<br>
+</div>
+
+<br><code><span class="keyword">type</span> <a name="TYPElabel"></a><code class="type"></code>label = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">LabOff</span> <span class="keyword">of</span> <code class="type">int</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">LabLab</span> <span class="keyword">of</span> <code class="type">string</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">DelayedBranch</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPElabel">label</a></code></code></td>
+
+</tr></table>
+
+<div class="info">
+the type modelling labels: either strings or offsets<br>
+</div>
+
+<br><code><span class="keyword">type</span> <a name="TYPEconst"></a><code class="type"></code>const = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Const</span> <span class="keyword">of</span> <code class="type">int</code></code></td>
+
+</tr></table>
+
+<div class="info">
+the type modelling the constants: e.g. #i -&gt; Const(i)<br>
+</div>
+
+<br><code><span class="keyword">type</span> <a name="TYPEasm"></a><code class="type"></code>asm = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">ADD</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">SUB</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">MUL</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">DIV</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">ADDI</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEconst">const</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">SUBI</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEconst">const</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">INC</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">DEC</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">LD</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">LDI</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEconst">const</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">ST</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">STI</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEconst">const</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">CALL</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">GOTOR</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">GOTOL</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPElabel">label</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">IFLEQ</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPElabel">label</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">IFLE</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPElabel">label</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">IFGEQ</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPElabel">label</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">IFGE</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPElabel">label</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">IFEQ</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPElabel">label</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">IFNEQ</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPEreg">reg</a> * <a href="Asm.html#TYPElabel">label</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">END</span></code></td>
+
+</tr></table>
+
+<div class="info">
+the assembler opcodes<br>
+</div>
+
+<br><code><span class="keyword">type</span> <a name="TYPEinstruction"></a><code class="type"></code>instruction = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Instr</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPEasm">asm</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">LabInstr</span> <span class="keyword">of</span> <code class="type"><a href="Asm.html#TYPElabel">label</a> * <a href="Asm.html#TYPEasm">asm</a></code></code></td>
+
+</tr></table>
+
+<div class="info">
+the assembler instruction: may have a label<br>
+</div>
+
+<pre><span class="keyword">val</span> <a name="VALdomain"></a><a href="code_VALAsm.domain.html">domain</a> : <code class="type"><a href="Asm.html#TYPEasm">asm</a> -> <a href="Asm.html#TYPEreg">reg</a> list</code></pre><div class="info">
+returns the domain of an instruction<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALcodomain"></a><a href="code_VALAsm.codomain.html">codomain</a> : <code class="type"><a href="Asm.html#TYPEasm">asm</a> -> <a href="Asm.html#TYPEreg">reg</a> list</code></pre><div class="info">
+returns the range of an instruction<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALintersect"></a><a href="code_VALAsm.intersect.html">intersect</a> : <code class="type">'a list -> 'a list -> 'a list</code></pre><div class="info">
+function computing the intersection of two lists. 
+    This is used to compute Bernstein conditions<br>
+<b>Returns</b> An empty list if no intersection is found, otherwise return the intersection list<br>
+</div>
+<div class="param_info"><code class="code">l1</code> : First list</div>
+<div class="param_info"><code class="code">l2</code> : Second list</div>
+<pre><span class="keyword">val</span> <a name="VALiu_instruction"></a><a href="code_VALAsm.iu_instruction.html">iu_instruction</a> : <code class="type"><a href="Asm.html#TYPEasm">asm</a> -> bool</code></pre><div class="info">
+checks if an instruction is "executed" on the IU<br>
+</div>
+<br><code><span class="keyword">type</span> <a name="TYPEdatadep"></a><code class="type"></code>datadep = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">NoDataDep</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">DataDep</span> <span class="keyword">of</span> <code class="type">int * <a href="Asm.html#TYPEasm">asm</a> * int * <a href="Asm.html#TYPEasm">asm</a> * <a href="Asm.html#TYPEreg">reg</a> list * int * int</code></code></td>
+
+</tr></table>
+
+<div class="info">
+data dependency: 
+	instructions inducing the data dependencies
+	interested register(s) 
+	"distance"
+	"N"<br>
+</div>
+
+<pre><span class="keyword">val</span> <a name="VALdelab"></a><a href="code_VALAsm.delab.html">delab</a> : <code class="type"><a href="Asm.html#TYPEinstruction">instruction</a> -> <a href="Asm.html#TYPEasm">asm</a></code></pre><div class="info">
+removes labels from an instruction, if present, 
+    and returns the assembler instruction only<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALdata_dep_i"></a><a href="code_VALAsm.data_dep_i.html">data_dep_i</a> : <code class="type">int -> int -> <a href="Asm.html#TYPEinstruction">instruction</a> -> <a href="Asm.html#TYPEinstruction">instruction</a> -> int -> int -> <a href="Asm.html#TYPEdatadep">datadep</a></code></pre><div class="info">
+check whether there is a data dependency among instructions<br>
+<b>Returns</b> A new datadep instance with the previous parameters<br>
+</div>
+<div class="param_info"><code class="code">a1</code> : the address of the first instruction</div>
+<div class="param_info"><code class="code">a2</code> : the address of the second instruction</div>
+<div class="param_info"><code class="code">li1</code> : the first instruction</div>
+<div class="param_info"><code class="code">li2</code> : the second instruction</div>
+<div class="param_info"><code class="code">dist</code> : the distance between instructions</div>
+<div class="param_info"><code class="code">n</code> : the N parameter</div>
+<pre><span class="keyword">val</span> <a name="VALloadsinsequence"></a><a href="code_VALAsm.loadsinsequence.html">loadsinsequence</a> : <code class="type"><a href="Asm.html#TYPEinstruction">instruction</a> list -> int -> int -> bool</code></pre><div class="info">
+checks whether there is a load in the sequence 
+    leading to the dependency<br>
+<b>Returns</b> true if a LD or a LDI is found in the sequence, otherwise return false<br>
+</div>
+<div class="param_info"><code class="code">prog</code> : the program with the sequence</div>
+<div class="param_info"><code class="code">i1</code> : the starting point of the sequence</div>
+<div class="param_info"><code class="code">i2</code> : the ending point of the sequence</div>
+<pre><span class="keyword">val</span> <a name="VALdata_deps"></a><a href="code_VALAsm.data_deps.html">data_deps</a> : <code class="type"><a href="Asm.html#TYPEinstruction">instruction</a> list -> <a href="Asm.html#TYPEdatadep">datadep</a> list</code></pre><div class="info">
+finds all data dependencies in a program<br>
+<b>Returns</b> An empty list if no data dependency is found, otherwise return a list of data dependencies<br>
+</div>
+<div class="param_info"><code class="code">prog</code> : the program</div>
+<pre><span class="keyword">val</span> <a name="VALbernstein"></a><a href="code_VALAsm.bernstein.html">bernstein</a> : <code class="type"><a href="Asm.html#TYPEasm">asm</a> -> <a href="Asm.html#TYPEasm">asm</a> -> bool</code></pre><div class="info">
+bernstein conditions check<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_reg"></a><a href="code_VALAsm.pp_reg.html">pp_reg</a> : <code class="type"><a href="Asm.html#TYPEreg">reg</a> -> unit</code></pre><div class="info">
+pretty print a register<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_regs"></a><a href="code_VALAsm.pp_regs.html">pp_regs</a> : <code class="type"><a href="Asm.html#TYPEreg">reg</a> list -> unit</code></pre><div class="info">
+pretty print a list of registers<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_reg_set"></a><a href="code_VALAsm.pp_reg_set.html">pp_reg_set</a> : <code class="type">int array -> unit</code></pre><div class="info">
+pretty print the register set
+    Used in pretty print of the 
+    environment of execution of a program<br>
+</div>
+<div class="param_info"><code class="code">r</code> : An integer array rappresenting the register set</div>
+<pre><span class="keyword">val</span> <a name="VALpp_mem"></a><a href="code_VALAsm.pp_mem.html">pp_mem</a> : <code class="type">int array -> unit</code></pre><div class="info">
+pretty print a memory state. Used in pretty print of the 
+    environment of execution of a program<br>
+</div>
+<div class="param_info"><code class="code">r</code> : An integer array rappresenting the memory</div>
+<pre><span class="keyword">val</span> <a name="VALpp_lab"></a><a href="code_VALAsm.pp_lab.html">pp_lab</a> : <code class="type"><a href="Asm.html#TYPElabel">label</a> -> unit</code></pre><div class="info">
+pretty print a label<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_const"></a><a href="code_VALAsm.pp_const.html">pp_const</a> : <code class="type"><a href="Asm.html#TYPEconst">const</a> -> unit</code></pre><div class="info">
+pretty print a constant<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_asm"></a><a href="code_VALAsm.pp_asm.html">pp_asm</a> : <code class="type"><a href="Asm.html#TYPEasm">asm</a> -> unit</code></pre><div class="info">
+pretty print a D-RISC instruction<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_instr"></a><a href="code_VALAsm.pp_instr.html">pp_instr</a> : <code class="type">int -> <a href="Asm.html#TYPEinstruction">instruction</a> -> unit</code></pre><div class="info">
+pretty print an instruction, possibly with a label<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_prog"></a><a href="code_VALAsm.pp_prog.html">pp_prog</a> : <code class="type">int -> <a href="Asm.html#TYPEinstruction">instruction</a> list -> unit</code></pre><div class="info">
+pretty print a whole program, starting with at a given address<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_program"></a><a href="code_VALAsm.pp_program.html">pp_program</a> : <code class="type"><a href="Asm.html#TYPEinstruction">instruction</a> list -> unit</code></pre><div class="info">
+pretty print a program, assuming it is allocated from address 0<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_dd"></a><a href="code_VALAsm.pp_dd.html">pp_dd</a> : <code class="type"><a href="Asm.html#TYPEdatadep">datadep</a> -> unit</code></pre><div class="info">
+pretty print a data dependency<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_deps"></a><a href="code_VALAsm.pp_deps.html">pp_deps</a> : <code class="type"><a href="Asm.html#TYPEdatadep">datadep</a> list -> unit</code></pre><div class="info">
+pretty print a list of dependencies<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALprog_to_asm"></a><a href="code_VALAsm.prog_to_asm.html">prog_to_asm</a> : <code class="type"><a href="Asm.html#TYPEinstruction">instruction</a> list -> <a href="Asm.html#TYPEasm">asm</a> list</code></pre><div class="info">
+transforms a list of instructions (with labels) into  
+    a list of assembler instruction (with no labels)<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALis_jump"></a><a href="code_VALAsm.is_jump.html">is_jump</a> : <code class="type"><a href="Asm.html#TYPEasm">asm</a> -> bool</code></pre><div class="info">
+Check if an ASM instruction in a jump istruction<br>
+<b>Returns</b> true if istr is a jump instruction, false in other case<br>
+</div>
+<div class="param_info"><code class="code">istr</code> : the ASM instruction</div>
+<pre><span class="keyword">val</span> <a name="VALhas_delayed_branch"></a><a href="code_VALAsm.has_delayed_branch.html">has_delayed_branch</a> : <code class="type"><a href="Asm.html#TYPEasm">asm</a> -> bool</code></pre><div class="info">
+Check if an ASM instruction has Delayed Branch flag<br>
+<b>Returns</b> true if istr has DelayedBranch, false in other case<br>
+</div>
+<div class="param_info"><code class="code">istr</code> : the ASM instruction</div>
+<br><code><span class="keyword">type</span> <a name="TYPEjumps"></a><code class="type"></code>jumps = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">NoJump</span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Jump</span> <span class="keyword">of</span> <code class="type">int * <a href="Asm.html#TYPEasm">asm</a></code></code></td>
+
+</tr></table>
+
+<div class="info">
+Jumps:
+		int: instruction number
+		asm: the instruction<br>
+</div>
+
+<pre><span class="keyword">val</span> <a name="VALjump_find"></a><a href="code_VALAsm.jump_find.html">jump_find</a> : <code class="type"><a href="Asm.html#TYPEinstruction">instruction</a> list -> <a href="Asm.html#TYPEjumps">jumps</a> list</code></pre><div class="info">
+finds all jumps in a program<br>
+<b>Returns</b> An empty list if no jump is found, otherwise return a list of jumps<br>
+</div>
+<div class="param_info"><code class="code">prog</code> : the program</div>
+<pre><span class="keyword">val</span> <a name="VALpp_jump"></a><a href="code_VALAsm.pp_jump.html">pp_jump</a> : <code class="type"><a href="Asm.html#TYPEjumps">jumps</a> -> unit</code></pre><div class="info">
+pretty print a jump<br>
+</div>
+<pre><span class="keyword">val</span> <a name="VALpp_jumps"></a><a href="code_VALAsm.pp_jumps.html">pp_jumps</a> : <code class="type"><a href="Asm.html#TYPEjumps">jumps</a> list -> unit</code></pre><div class="info">
+pretty print a list of jumps<br>
+</div>
+</body></html>

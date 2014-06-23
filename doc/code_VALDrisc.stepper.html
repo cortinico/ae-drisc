@@ -1,0 +1,24 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Asm" rel="Chapter" href="Asm.html">
+<link title="Drisc" rel="Chapter" href="Drisc.html"><title>Drisc.stepper</title>
+</head>
+<body>
+<code class="code"><span class="keyword">let</span>&nbsp;stepper&nbsp;r&nbsp;m&nbsp;ipc&nbsp;prg&nbsp;steps&nbsp;=&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;pc&nbsp;=&nbsp;ref&nbsp;ipc&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;reg&nbsp;=&nbsp;create_regs&nbsp;r&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;mem&nbsp;=&nbsp;create_regs&nbsp;m&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;penv&nbsp;=&nbsp;<span class="constructor">Penv</span>(pc,reg,mem,(labels&nbsp;prg&nbsp;0))&nbsp;<span class="keyword">in</span>&nbsp;<br>
+&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;aprg&nbsp;=&nbsp;<span class="constructor">Array</span>.of_list&nbsp;prg&nbsp;<span class="keyword">in</span><br>
+<br>
+&nbsp;&nbsp;<span class="keyword">for</span>&nbsp;i=0&nbsp;<span class="keyword">to</span>&nbsp;steps&nbsp;<span class="keyword">do</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;printf&nbsp;<span class="string">"===========&gt;&nbsp;STEP&nbsp;%d:&nbsp;executing&nbsp;"</span>&nbsp;i;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(pp_instr&nbsp;!pc&nbsp;aprg.(!pc));&nbsp;printf&nbsp;<span class="string">"\n"</span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;step&nbsp;prg&nbsp;penv;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dump&nbsp;penv;<br>
+&nbsp;&nbsp;<span class="keyword">done</span></code></body></html>
